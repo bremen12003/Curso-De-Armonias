@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>VERSATILIDAD MUSICAL - APRENDIENDO ACORDES</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%;background:#0a0a10;color:#fff;font-family:ui-sans-system,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+#bienvenida{position:fixed;inset:0;z-index:100;background:#0a0a10;display:flex;flex-direction:column;align-items:center;padding:20px 16px;cursor:pointer;overflow:hidden;transition:opacity .6s ease, transform .6s ease, visibility .6s}
+#bienvenida.saliendo{opacity:0;transform:translateY(-24px);visibility:hidden}
+#segunda{display:block;min-height:100vh;background:radial-gradient(ellipse at 50% 0%, #1a1230 0%, #0a0a10 55%);padding:14px 16px 120px 16px;opacity:0;transform:translateY(12px);transition:opacity .6s ease .15s, transform .6s ease .15s;position:relative;overflow:visible}
+html,body{overflow-x:hidden;overflow-y:auto}
+#segunda::-webkit-scrollbar{width:8px}
+#segunda::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff5a8a,#ff8c1a,#ffd166);border-radius:10px}
+#segunda.entrando{opacity:1;transform:translateY(0)}
+.titulo-arriba{font-size:22px;font-weight:900;text-align:center;line-height:1.1;letter-spacing:1px;white-space:nowrap}
+.titulo-arriba .letra2{display:inline-block;opacity:0;animation:letraEntra 1.4s ease forwards;text-shadow:0 2px 0 rgba(0,0,0,.6),0 4px 0 rgba(0,0,0,.35),0 8px 16px rgba(0,0,0,.5)}
+.subtitulo-arriba{font-size:16px;font-weight:800;margin-top:4px;text-align:center;letter-spacing:1px}
+.subtitulo-arriba .letra2{display:inline-block;opacity:0;animation:letraEntra 1.4s ease forwards;text-shadow:0 2px 0 rgba(0,0,0,.6),0 4px 0 rgba(0,0,0,.35),0 8px 14px rgba(0,0,0,.5)}
+.linea{height:1px;width:86%;margin-top:10px;background:linear-gradient(90deg, transparent 0%, #ff8c1a 50%, transparent 100%)}
+/* Pestañas segunda pantalla, acorde al diseño */
+.pestanas{display:flex;gap:10px;justify-content:center;margin:16px 12px 0 12px}
+.pestana{flex:1;padding:12px 8px;border-radius:16px;border:1px solid #3a3a4a;background:#1e1e2e;color:#a0a8b8;font-size:14px;font-weight:900;letter-spacing:.08em;text-align:center;cursor:pointer;transition:all .3s ease;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+.pestana.activa{background:linear-gradient(135deg,#ff5a8a,#ff8c1a,#ffd166);color:#fff;border-color:#ff8c1a;box-shadow:0 6px 18px rgba(255,140,26,.35),0 2px 0 rgba(0,0,0,.4);transform:translateY(-2px)}
+.pestana-media{padding:14px 8px;font-size:14px;min-height:48px}
+.pestana-ayuda{background:linear-gradient(135deg,#ff5a8a,#ff8c1a,#ffd166);color:#fff;border-color:#ff8c1a;text-align:center;padding:14px 8px;font-size:14px;min-height:48px}
+.pestana-ayuda.activa{background:linear-gradient(135deg,#ffd166,#ff8c1a,#ff5a8a);color:#fff;box-shadow:0 6px 18px rgba(255,140,26,.4),0 2px 0 rgba(0,0,0,.4);transform:translateY(-2px)}
+.pestana-contenido{display:none;padding:16px 12px 20px 12px}
+.pestana-contenido.activa{display:block;animation:letraEntra 0.7s ease forwards}
+.ayuda-card{background:#16161f;border:1px solid #2a2a3a;border-radius:14px;padding:14px;margin-bottom:10px}
+.ayuda-titulo{font-size:15px;font-weight:900;color:#ffd166;margin-bottom:6px}
+.ayuda-texto{font-size:13px;line-height:1.5;color:#c8cdd8}
+.ayuda-paso{font-size:13px;line-height:1.6;color:#fff;margin-bottom:6px}
+.ayuda-paso b{color:#ff8c1a}
+
+/* Líneas degradadas a los lados de la página */
+.lado-izq{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg, transparent 0%, #ff5a8a 15%, #ff9a3d 35%, #ffd166 50%, #7dd87d 65%, #5aa9ff 85%, transparent 100%);opacity:.9}
+.lado-der{position:absolute;right:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg, transparent 0%, #5aa9ff 15%, #b39ddb 35%, #ff6b9d 50%, #ff9a3d 65%, #ffd166 85%, transparent 100%);opacity:.9}
+/* Bienvenida: títulos más altos, letras separadas, 10 renglones de separación, transición lenta */
+.bien-titulo{margin-top:18px;text-align:center;line-height:1.15;max-width:100%}
+.bien-titulo .letra{display:inline-block;font-size:32px;font-weight:900;letter-spacing:3px;opacity:0;animation:letraEntra 1.6s ease forwards;text-shadow:0 2px 0 rgba(0,0,0,.6),0 4px 0 rgba(0,0,0,.35),0 8px 18px rgba(0,0,0,.55)}
+.bien-sub{margin-top:18px;text-align:center;line-height:1.3;max-width:100%}
+.bien-sub .letra{display:inline-block;font-size:19px;font-weight:900;letter-spacing:1.5px;opacity:0;animation:letraEntra 1.6s ease forwards;text-shadow:0 2px 0 rgba(0,0,0,.6),0 4px 0 rgba(0,0,0,.35),0 8px 14px rgba(0,0,0,.5)}
+@keyframes letraEntra{0%{opacity:0;transform:translateY(-42px) translateX(var(--dx,0px)) scale(.6) rotate(-10deg)}55%{opacity:1;transform:translateY(8px) scale(1.06)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}
+.linea-blanca{height:1px;width:86%;margin:14px auto 0 auto;background:linear-gradient(90deg, transparent 0%, #fff 50%, transparent 100%)}
+.linea-naranja{height:1px;width:86%;margin:14px auto 0 auto;background:linear-gradient(90deg, transparent 0%, #ff8c1a 50%, transparent 100%)}
+.boton-entrar{margin-top:36px;padding:12px 34px;border-radius:24px;border:1px solid #ff8c1a;background:#1e1e2e;color:#ff8c1a;font-size:15px;font-weight:800;letter-spacing:.06em;opacity:0;animation:letraEntra 1.6s ease 2.6s forwards;box-shadow:0 6px 18px rgba(255,140,26,.25)}
+.nota{position:absolute;font-size:36px;color:#ff8c1a;opacity:0;animation:notaEntra 1.8s ease forwards}
+@keyframes notaEntra{0%{opacity:0;transform:translateY(-40px) scale(.6) rotate(-15deg)}60%{opacity:.28;transform:translateY(8px) scale(1.05)}100%{opacity:.22;transform:translateY(0) scale(1) rotate(0deg)}}
+</style>
+</head>
+<body>
+<div id="bienvenida">
+  <div class="lado-izq"></div>
+  <div class="lado-der"></div>
+  <span class="nota" style="top:12%;left:10%;animation-delay:.1s">♪</span>
+  <span class="nota" style="top:18%;right:12%;font-size:28px;animation-delay:.4s">♫</span>
+  <span class="nota" style="top:55%;left:8%;font-size:32px;animation-delay:.7s">♬</span>
+  <span class="nota" style="top:62%;right:9%;font-size:44px;animation-delay:1s">♩</span>
+  <span class="nota" style="bottom:14%;left:18%;font-size:30px;animation-delay:1.2s">♪</span>
+  <span class="nota" style="bottom:18%;right:18%;font-size:26px;animation-delay:1.4s">♫</span>
+  <div class="bien-titulo" id="tituloBienvenida"></div>
+  <div class="linea-blanca"></div>
+  <div class="bien-sub" id="subBienvenida"></div>
+  <div class="linea-naranja"></div>
+  <div class="boton-entrar">ENTRAR</div>
+</div>
+<div id="segunda">
+  <div class="lado-izq"></div>
+  <div class="lado-der"></div>
+  <span class="nota" style="top:22%;left:8%;font-size:30px;animation-delay:.2s">♪</span>
+  <span class="nota" style="top:30%;right:9%;font-size:26px;animation-delay:.6s">♫</span>
+  <span class="nota" style="top:52%;left:12%;font-size:34px;animation-delay:1s">♬</span>
+  <span class="nota" style="top:68%;right:12%;font-size:28px;animation-delay:1.3s">♩</span>
+  <span class="nota" style="bottom:16%;left:20%;font-size:26px;animation-delay:1.6s">♪</span>
+  <span class="nota" style="bottom:10%;right:20%;font-size:30px;animation-delay:1.9s">♫</span>
+  <div class="titulo-arriba" id="tituloSegunda"></div>
+  <div class="linea" style="margin:8px auto 8px auto;width:70%"></div>
+  <div class="subtitulo-arriba" id="subSegunda"></div>
+  <div class="linea" style="margin-left:auto;margin-right:auto"></div>
+  <div id="bloqueModos" style="display:block">
+  <div style="text-align:center;margin:16px 12px 0 12px;font-size:13px;font-weight:900;letter-spacing:.18em;color:#ffd166">MODO DE TRABAJAR</div>
+  <div class="pestanas" style="margin-top:64px">
+    <div class="pestana pestana-media activa" id="tabSencillo" onclick="abrirVentanaModo('SENCILLO')">SENCILLO</div>
+    <div class="pestana pestana-media" id="tabMedio" onclick="abrirVentanaModo('MEDIO')">MEDIO</div>
+    <div class="pestana pestana-media" id="tabDificil" onclick="abrirVentanaModo('DIFICIL')">DIFÍCIL</div>
+  </div>
+    <div id="contSencillo" class="pestana-contenido activa">
+    <div style="text-align:center;padding:18px 12px;color:#c8cdd8;font-size:13px;line-height:1.6">Aquí va lo <b style="color:#7dd87d">SENCILLO</b>.<br>Lo más fácil, para empezar sin atorarse.</div>
+  </div>
+<div id="contMedio" class="pestana-contenido">
+    <div style="text-align:center;padding:18px 12px;color:#c8cdd8;font-size:13px;line-height:1.6">Aquí va lo <b style="color:#ffd166">MEDIO</b>.<br>Ya le vas agarrando, un poquito más de color.</div>
+  </div>
+  <div id="contDificil" class="pestana-contenido">
+    <div style="text-align:center;padding:18px 12px;color:#c8cdd8;font-size:13px;line-height:1.6">Aquí va lo <b style="color:#ff5a8a">DIFÍCIL</b>.<br>Para cuando ya te sientas pro.</div>
+  </div>
+  </div>
+  <div style="position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px 12px 12px 12px;background:linear-gradient(180deg, transparent 0%, rgba(10,10,16,.95) 30%, #0a0a10 100%)">
+    <div class="pestana pestana-ayuda" id="tabAyuda" onclick="cambiarPestana('ayuda')">AYUDA</div>
+  </div>
+  <div id="contAyuda" class="pestana-contenido" style="padding-bottom:90px">
+<div class="ayuda-card"><div class="ayuda-titulo">¿Qué es esta app?</div><div class="ayuda-texto">Es para aprender acordes en el piano, sin clases, a tu ritmo. Tú tocas, la app te muestra qué pisar y cómo suena.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">¿Cómo se usa aquí? Ya estás adentro</div><div class="ayuda-texto"><div class="ayuda-paso">Ya estás adentro, no tienes que picarle a nada para entrar. Aquí abajo del título dice <b>MODO DE TRABAJAR</b>.</div><div class="ayuda-paso">Abajo tienes 3 pestañas medianas: <b>SENCILLO, MEDIO, DIFÍCIL</b>. Pícale a una y te cambia lo que ves abajo.</div><div class="ayuda-paso">Y abajo ya está toda la explicación, directo en esta segunda página.</div></div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">¿Qué hace cada nota?</div><div class="ayuda-texto">Cada acorde tiene 3 notas o más. La primera nota es la raíz, es la que dice de qué tono es. Si es Do, la raíz es Do. La segunda nota es la que dice si suena alegre o triste. Si está alta, suena alegre, mayor. Si baja tantito, suena triste, menor. La tercera nota es la que le da cuerpo, la que hace que suene lleno. Si le agregas más notas, le das más color.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">¿Qué varía en tono mayor?</div><div class="ayuda-texto">En tono mayor, la segunda nota está arriba, por eso suena alegre, contento. Ejemplo Do mayor: Do - Mi - Sol. Mi está arriba, por eso suena alegre. Si bajas Mi a Mi bemol, ya se vuelve menor, ya suena triste. Eso es lo que varía, la nota del medio. Esa notita cambia todo el ánimo.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">¿Qué hace dentro de cada tono mayor? Sus funciones</div><div class="ayuda-texto"><div class="ayuda-paso"><b>El tono principal:</b> Es tu casa. Donde empiezas y donde terminas. Te sientes tranquilo.</div><div class="ayuda-paso"><b>El que te lleva:</b> Es el que te empuja para que caigas a tu casa. Te mete tantita tensión para que se sienta rico cuando caes.</div><div class="ayuda-paso"><b>El que te pasea:</b> Son los que están en medio, te van llevando de un lado a otro, para que no se oiga siempre lo mismo.</div><div class="ayuda-paso">Dentro de cada tono mayor siempre hay esos 3 papeles. Uno es tu casa, otro te empuja, y otros te pasean. Por eso cuando cambias de tono, cambian las notas, pero los papeles siguen siendo los mismos.</div></div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">¿Si pico un acorde me sale otro?</div><div class="ayuda-texto">Sí. Cuando picas un acorde, la app te muestra ese acorde. Y abajo te muestra los que le siguen, los que van conectados. No es que te salga otro por error. Es que un acorde te lleva a otro. Por ejemplo, picas Do mayor y te sale Sol 7, porque Sol 7 es el que te empuja para que caigas otra vez a Do. Así vas aprendiendo cómo se conectan, no solo acordes sueltos.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">El piano</div><div class="ayuda-texto">Siempre está abajo. Cuando le das Play, primero te enseña una por una, despacio, para que veas qué dedo va en cada tecla. Al final toca todas juntas para que oigas cómo suena el acorde completo.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Botón Play</div><div class="ayuda-texto">Le picas y el piano toca solo. Primero nota por nota, luego todo junto. Si quieres volver a oírlo, le picas otra vez.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Voz ON / Voz OFF</div><div class="ayuda-texto">Voz ON: además de sonar, una voz te dice el nombre, por ejemplo Do mayor, Re menor. Voz OFF: solo suena el piano, sin que nadie hable. Si ya te sabes los nombres, lo pones en OFF.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Tonos Naturales</div><div class="ayuda-texto">Son los acordes más sencillos, de 3 notas. Los mayores suenan contentos, alegres. Los menores suenan más tristes, más sentidos. Cada tono tiene 3 formas: la normal, la primera vuelta y la segunda vuelta. Siempre van para adelante.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Círculos Armónicos</div><div class="ayuda-texto">Es el mismo acorde, pero con más notas encima. Le pones 7ma, 9na, 11va, 13va y suena más lleno, más bonito, más pro. No cambias de acorde, solo le das más color.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Acordes de Paso</div><div class="ayuda-texto">Son los que te ayudan a pasar de un acorde a otro sin que se oiga feo el brinco. Como si te llevaran de la mano de un acorde al que sigue, para que el cambio se oiga suave.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Dominantes</div><div class="ayuda-texto">Son los que avisan que ya va a caer el tono. Meten tantita tensión, como que te dicen agárrate, que ya viene. Y luego cae al tono y se siente bien.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">Voicings</div><div class="ayuda-texto">Son acordes a dos manos. La izquierda toca solo la raíz, la nota que dice de qué tono es. La derecha toca las notas que le dan el color. Juntas suenan más llenas, como los que tocan los pro.</div></div>
+    <div class="ayuda-card"><div class="ayuda-titulo">¿Y si me atoro?</div><div class="ayuda-texto">Vuelve aquí, léelo con calma, y dale Play otra vez. Nadie te está apurando. Aquí se aprende a tu ritmo.</div>
+  </div>
+  </div>
+  </div>
+</div>
+<div id="ventanaModo" style="display:none;position:absolute;top:0;left:0;right:0;min-height:100vh;z-index:100;background:radial-gradient(ellipse at 50% 0%, #1a1230 0%, #0a0a10 55%);padding:14px 16px 140px 16px">
+    <div class="lado-izq"></div>
+    <div class="lado-der"></div>
+    <div class="titulo-arriba">VERSATILIDAD MUSICAL</div>
+    <div class="linea" style="margin:8px auto;width:70%"></div>
+    <div class="subtitulo-arriba"><span style="color:#ff8c1a">APRENDIENDO</span> <span style="color:#ffd166">ACORDES</span></div>
+    <div class="linea" style="margin-left:auto;margin-right:auto"></div>
+    <div onclick="toggleConociendo()" style="margin:64px 0 0 -16px;padding:10px 12px;border-radius:0 12px 12px 0;background:#16161f;border:1px solid #2a2a3a;border-left:none;max-width:190px;font-size:12px;font-weight:900;letter-spacing:.04em;color:#ffd166;text-align:center;cursor:pointer">CONOCIENDO ACORDES ▼</div>
+    <div id="dentroConociendo" style="display:none;margin:14px 0 0 0">
+      <div id="vistaConociendo">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div onclick="mostrarTonos('mayor')" style="flex:1;min-width:140px;padding:12px 10px;border-radius:12px;background:linear-gradient(145deg,#1e1e2e,#111119);border:1px solid #4ade8066;color:#4ade80;font-size:11px;font-weight:800;text-align:center;cursor:pointer">TONOS NATURALES<br>MAYORES</div>
+          <div onclick="mostrarTonos('menor')" style="flex:1;min-width:140px;padding:12px 10px;border-radius:12px;background:linear-gradient(145deg,#1e1e2e,#111119);border:1px solid #fb923c66;color:#fb923c;font-size:11px;font-weight:800;text-align:center;cursor:pointer">TONOS NATURALES<br>MENORES</div>
+        </div>
+      </div>
+      <div id="vistaTonos" style="display:none"></div>
+      <div id="vistaDetalle" style="display:none"></div>
+    </div>
+    
+    
+    <div style="position:fixed;left:0;right:0;bottom:0;z-index:101;padding:10px 12px 12px 12px;background:linear-gradient(180deg, transparent 0%, rgba(10,10,16,.95) 30%, #0a0a10 100%);display:flex;gap:10px"><div class="pestana pestana-ayuda" style="flex:1" onclick="alert('AYUDA: Aquí te explico todo, con calma, a tu ritmo.')">AYUDA</div><div class="pestana pestana-media" onclick="cerrarVentanaModo()" style="flex:1;text-align:center">⬅ REGRESAR</div></div>
+</div>
+<script>
+(function(){
+  var colores=["#ff5a5a","#ff8c1a","#ffd166","#7dd87d","#5aa9ff","#b39ddb","#ff6b9d","#00d4ff","#ff9a3d","#a8ff6a"];
+  function letras(id, lineas, base){
+    var cont=document.getElementById(id);
+    lineas.forEach(function(texto, li){
+      var fila=document.createElement("div");
+      fila.style.display="block";
+      fila.style.whiteSpace="nowrap";
+      var idx=0;
+      texto.split("").forEach(function(ch){
+        var s=document.createElement("span");
+        s.className="letra";
+        s.textContent=ch===" " ? "\u00A0" : ch;
+        if(ch===" "){ s.style.width="8px"; }
+        s.style.color=colores[(idx+li*3)%colores.length];
+        var dx=[-32,32,-20,20,-42,42,-14,14,-28,28][idx%10];
+        s.style.setProperty("--dx", dx+"px");
+        s.style.animationDelay=(base + idx*0.12 + li*0.5)+"s";
+        fila.appendChild(s);
+        idx++;
+      });
+      cont.appendChild(fila);
+    });
+  }
+  letras("tituloBienvenida",["VERSATILIDAD","MUSICAL"],0.1);
+  letras("subBienvenida",["APRENDIENDO","ACORDES"],1.6);
+  var colores2=["#ff5a5a","#ff8c1a","#ffd166","#7dd87d","#5aa9ff","#b39ddb","#ff6b9d","#00d4ff"];
+  function letras2(id, texto, base){
+    var cont=document.getElementById(id);
+    texto.split("").forEach(function(ch, idx){
+      var s=document.createElement("span");
+      s.className="letra2";
+      s.textContent=ch===" " ? "\u00A0" : ch;
+      if(ch===" "){ s.style.width="6px"; }
+      s.style.color=colores2[idx%colores2.length];
+      var dx=[-24,24,-16,16,-30,30][idx%6];
+      s.style.setProperty("--dx", dx+"px");
+      s.style.animationDelay=(base + idx*0.08)+"s";
+      cont.appendChild(s);
+    });
+  }
+  letras2("tituloSegunda","VERSATILIDAD MUSICAL",0.2);
+  (function(){
+    var cont=document.getElementById("subSegunda");
+    var palabras=[["APRENDIENDO","#ff8c1a"],["ACORDES","#ffd166"]];
+    var idx=0;
+    palabras.forEach(function(par, wi){
+      var texto=par[0], color=par[1];
+      texto.split("").forEach(function(ch){
+        var s=document.createElement("span");
+        s.className="letra2";
+        s.textContent=ch;
+        s.style.color=color;
+        var dx=[-24,24,-16,16,-30,30][idx%6];
+        s.style.setProperty("--dx", dx+"px");
+        s.style.animationDelay=(0.9 + idx*0.08)+"s";
+        cont.appendChild(s);
+        idx++;
+      });
+      if(wi===0){
+        var esp=document.createElement("span");
+        esp.className="letra2";
+        esp.textContent="\u00A0";
+        esp.style.width="8px";
+        esp.style.animationDelay=(0.9 + idx*0.08)+"s";
+        cont.appendChild(esp);
+        idx++;
+      }
+    });
+  })();
+  document.getElementById("bienvenida").addEventListener("click", function(){
+    var b=this;
+    b.classList.add("saliendo");
+    document.getElementById("segunda").classList.add("entrando");
+    setTimeout(function(){ b.style.display="none"; }, 650);
+  });
+  // Copiado tal cual del respaldo: datos de TONOS NATURALES MAYORES y MENORES
+  var NAT_MAYOR=[
+    {acorde:"DO MAYOR",notes:["C3","E3","G3"],labels:["C","E","G"],speaks:["Do","Mi","Sol"],fullSpeak:"Do mayor"},
+    {acorde:"RE MAYOR",notes:["D3","F#3","A3"],labels:["D","F#","A"],speaks:["Re","Fa sostenido","La"],fullSpeak:"Re mayor"},
+    {acorde:"MI MAYOR",notes:["E3","G#3","B3"],labels:["E","G#","B"],speaks:["Mi","Sol sostenido","Si"],fullSpeak:"Mi mayor"},
+    {acorde:"FA MAYOR",notes:["F3","A3","C4"],labels:["F","A","C"],speaks:["Fa","La","Do"],fullSpeak:"Fa mayor"},
+    {acorde:"SOL MAYOR",notes:["G3","B3","D4"],labels:["G","B","D"],speaks:["Sol","Si","Re"],fullSpeak:"Sol mayor"},
+    {acorde:"LA MAYOR",notes:["A3","C#4","E4"],labels:["A","C#","E"],speaks:["La","Do sostenido","Mi"],fullSpeak:"La mayor"},
+    {acorde:"SI MAYOR",notes:["B3","D#4","F#4"],labels:["B","D#","F#"],speaks:["Si","Re sostenido","Fa sostenido"],fullSpeak:"Si mayor"}];
+  var NAT_MENOR=[
+    {acorde:"DO MENOR",notes:["C3","D#3","G3"],labels:["C","D#","G"],speaks:["Do","Mi bemol","Sol"],fullSpeak:"Do menor"},
+    {acorde:"RE MENOR",notes:["D3","F3","A3"],labels:["D","F","A"],speaks:["Re","Fa","La"],fullSpeak:"Re menor"},
+    {acorde:"MI MENOR",notes:["E3","G3","B3"],labels:["E","G","B"],speaks:["Mi","Sol","Si"],fullSpeak:"Mi menor"},
+    {acorde:"FA MENOR",notes:["F3","G#3","C4"],labels:["F","G#","C"],speaks:["Fa","Sol sostenido","Do"],fullSpeak:"Fa menor"},
+    {acorde:"SOL MENOR",notes:["G3","A#3","D4"],labels:["G","A#","D"],speaks:["Sol","Si bemol","Re"],fullSpeak:"Sol menor"},
+    {acorde:"LA MENOR",notes:["A3","C4","E4"],labels:["A","C","E"],speaks:["La","Do","Mi"],fullSpeak:"La menor"},
+    {acorde:"SI MENOR",notes:["B3","D4","F#4"],labels:["B","D","F#"],speaks:["Si","Re","Fa sostenido"],fullSpeak:"Si menor"}];
+  // Pm tal cual del respaldo: genera Fundamental + Primera + Segunda inversión
+  function Pm(e){
+    var Cm={};
+    var notasNombres=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+    function notaAMidi(n){ var m=n.match(/^([A-G]#?)(\d)$/); var base=notasNombres.indexOf(m[1]); return (parseInt(m[2],10)+1)*12+base; }
+    function midiANota(m){ return notasNombres[((m%12)+12)%12]+(Math.floor(m/12)-1); }
+    var t=[{title:e.acorde,notes:e.notes.slice(),labels:e.labels.slice(),speaks:e.speaks.slice(),full:e.fullSpeak,isFundamental:true}];
+    var r=e.notes.map(notaAMidi).filter(function(n){return isFinite(n);});
+    var l=e.labels.slice(), o=e.speaks.slice();
+    if(r.length){
+      var a=r.slice(1).concat(r[0]+12).sort(function(x,y){return x-y;});
+      if(a.length && a[a.length-1]>76) a=a.map(function(n){return n-12;});
+      var b=a.slice(1).concat(a[0]+12).sort(function(x,y){return x-y;});
+      if(b.length && b[b.length-1]>76) b=b.map(function(n){return n-12;});
+      [[1,a],[2,b]].forEach(function(pair){
+        var idx=pair[0], notesMidi=pair[1];
+        var names=notesMidi.map(midiANota);
+        var labels=names.map(function(n){return n.replace(/\d+$/,"");});
+        var title=e.acorde+" - "+(idx===1?"Primera inversión":"Segunda inversión");
+        var full=e.fullSpeak+" "+(idx===1?"primera inversión":"segunda inversión");
+        t.push({title:title,notes:names,labels:labels,speaks:labels.map(function(v,i){return o[(i+idx)%o.length]||v;}),full:full,isFundamental:false});
+      });
+    }
+    return t;
+  }
+  var tipoActual='mayor';
+  var acordeIdxActual=0;
+  var versionActual=0;
+  var vozOn=true;
+  var _audioCtx=null;
+  function getCtx(){ if(!_audioCtx){ _audioCtx=new (window.AudioContext||window.webkitAudioContext)(); } if(_audioCtx.state==="suspended") _audioCtx.resume(); return _audioCtx; }
+  function notaAFrec(nota){ var mapa={C:0,"C#":1,D:2,"D#":3,E:4,F:5,"F#":6,G:7,"G#":8,A:9,"A#":10,B:11}; var m=nota.match(/^([A-G]#?)(\d)$/); var midi=(parseInt(m[2],10)+1)*12+mapa[m[1]]; return 440*Math.pow(2,(midi-69)/12); }
+  function tocarNotaPiano(nota){
+    try{
+      var ctx=getCtx(); var now=ctx.currentTime;
+      var osc=ctx.createOscillator(); var waveReal=new Float32Array(64), waveImag=new Float32Array(64);
+      for(var i=1;i<64;i++){ waveImag[i]=2/(i*Math.PI)*Math.sin(i*Math.PI*0.32); }
+      var wave=ctx.createPeriodicWave(waveReal, waveImag, {disableNormalization:false});
+      osc.setPeriodicWave(wave); osc.frequency.setValueAtTime(notaAFrec(nota), now);
+      var filt=ctx.createBiquadFilter(); filt.type="lowpass"; filt.frequency.setValueAtTime(4204, now); filt.frequency.exponentialRampToValueAtTime(2400, now+0.45); filt.Q.setValueAtTime(0.7, now);
+      var g=ctx.createGain(); g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.3, now+0.02); g.gain.exponentialRampToValueAtTime(0.0001, now+1.35);
+      osc.connect(filt); filt.connect(g); g.connect(ctx.destination); osc.start(now); osc.stop(now+1.4);
+    }catch(e){}
+  }
+  function hablar(texto){ if(!vozOn) return; try{ var u=new SpeechSynthesisUtterance(texto); u.lang="es-MX"; u.rate=0.9; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);}catch(e){} }
+  window.toggleConociendo=function(){
+    var d=document.getElementById('dentroConociendo');
+    if(d) d.style.display=(d.style.display==='none'?'block':'none');
+  };
+  // REGRESAR de donde veniste: cada vista regresa a su anterior
+  window.regresarAConociendo=function(){
+    document.getElementById('vistaTonos').style.display='none';
+    document.getElementById('vistaDetalle').style.display='none';
+    document.getElementById('vistaConociendo').style.display='block';
+    document.getElementById('vistaConociendo').scrollIntoView({behavior:"smooth", block:"nearest"});
+  };
+  window.regresarATonos=function(){
+    document.getElementById('vistaDetalle').style.display='none';
+    document.getElementById('vistaTonos').style.display='block';
+  };
+  window.mostrarTonos=function(tipo){
+    tipoActual=tipo;
+    var arr=tipo==='mayor'?NAT_MAYOR:NAT_MENOR;
+    var color=tipo==='mayor'?'#4ade80':'#fb923c';
+    var titulo=tipo==='mayor'?'TONOS NATURALES MAYORES':'TONOS NATURALES MENORES';
+    var html='<div style="font-size:15px;color:'+color+';font-weight:800;text-align:center">'+titulo+'</div><div style="height:2px;background:linear-gradient(90deg,transparent,'+color+',transparent);margin:8px 0 12px 0"></div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">';
+    arr.forEach(function(a,i){
+      html+='<div onclick="mostrarDetalleAcorde('+i+')" style="padding:12px 8px;border-radius:12px;background:#16161f;border:1px solid #2a2a3a;text-align:center;cursor:pointer"><div style="font-size:16px;font-weight:900;color:#fff">'+a.acorde.split(" ")[0]+'</div><div style="font-size:11px;color:#c8cdd8;margin-top:4px">'+a.speaks.join(" - ")+'</div><div style="font-size:10px;color:'+color+';margin-top:6px">▶ VER ACORDE</div></div>';
+    });
+    html+='</div><div onclick="regresarAConociendo()" style="margin-top:14px;text-align:center;padding:10px;border-radius:10px;background:#1e1e2e;color:#fff;font-size:12px;font-weight:800;cursor:pointer">⬅ REGRESAR A CONOCIENDO ACORDES</div>';
+    document.getElementById('vistaConociendo').style.display='none';
+    var vt=document.getElementById('vistaTonos'); vt.style.display='block'; vt.innerHTML=html;
+    document.getElementById('vistaDetalle').style.display='none';
+  };
+  window.mostrarDetalleAcorde=function(idx){
+    acordeIdxActual=idx; versionActual=0;
+    var arr=tipoActual==='mayor'?NAT_MAYOR:NAT_MENOR;
+    var a=arr[idx];
+    var versiones=Pm(a);
+    var color=tipoActual==='mayor'?'#4ade80':'#fb923c';
+    var v=versiones[0];
+    var html='<div style="background:#111119;border:1px solid #2a2a3a;border-radius:16px;padding:14px">';
+    html+='<div style="font-size:18px;font-weight:900;text-align:center;color:'+color+'">'+v.title+'</div>';
+    html+='<div style="font-size:12px;text-align:center;color:#c8cdd8;margin-top:4px">'+v.speaks.join(" - ")+'</div>';
+    // Selector de versiones: Fundamental / Primera / Segunda, tal cual en el respaldo
+    html+='<div style="display:flex;gap:8px;margin-top:12px">';
+    versiones.forEach(function(ver,i){
+      var activo=i===0;
+      html+='<div onclick="cambiarVersion('+i+')" id="verBtn'+i+'" style="flex:1;padding:8px;border-radius:10px;background:'+(activo?color:'#1e1e2e')+';color:'+(activo?'#000':'#fff')+';font-size:11px;font-weight:800;text-align:center;cursor:pointer">'+(i===0?'FUNDAMENTAL':i===1?'1ª INVERSIÓN':'2ª INVERSIÓN')+'</div>';
+    });
+    html+='</div>';
+    html+='<div id="pianoCont"></div>';
+    html+='<div style="display:flex;gap:8px;margin-top:10px"><div onclick="playVersion()" style="flex:1;padding:12px;border-radius:12px;background:'+color+';color:#000;font-size:13px;font-weight:900;text-align:center;cursor:pointer">▶ PLAY</div><div onclick="vozOn=!vozOn;this.textContent=vozOn?\'🔊 VOZ: ON\':\'🔇 VOZ: OFF\'" style="flex:1;padding:12px;border-radius:12px;background:#1e1e2e;border:1px solid #2a2a3a;color:#fff;font-size:12px;font-weight:800;text-align:center;cursor:pointer">🔊 VOZ: ON</div></div>';
+    // Tarjetas Izquierda / Derecha / Todo junto, tal cual en el respaldo
+    html+='<div style="display:flex;gap:8px;margin-top:10px"><div style="flex:1;padding:10px;border-radius:10px;background:#16161f;border:1px solid #2a2a3a;text-align:center"><div style="font-size:10px;color:#ff8c1a;font-weight:800">IZQUIERDA</div><div id="cardIzq" style="font-size:12px;color:#fff;margin-top:4px">'+v.speaks[0]+'</div></div><div style="flex:1;padding:10px;border-radius:10px;background:#16161f;border:1px solid #2a2a3a;text-align:center"><div style="font-size:10px;color:#ff8c1a;font-weight:800">DERECHA</div><div id="cardDer" style="font-size:12px;color:#fff;margin-top:4px">'+v.speaks.join(" - ")+'</div></div><div style="flex:1;padding:10px;border-radius:10px;background:#16161f;border:1px solid #2a2a3a;text-align:center"><div style="font-size:10px;color:#ff8c1a;font-weight:800">TODO JUNTO</div><div id="cardTodo" style="font-size:12px;color:#fff;margin-top:4px">'+v.speaks.join(" - ")+'</div></div></div>';
+    html+='<div style="font-size:12px;color:#c8cdd8;line-height:1.5;margin-top:12px;text-align:center">Este acorde es <b style="color:#fff">'+v.full+'</b>. Tócalo con calma, primero izquierda, luego derecha, y al final todo junto.</div>';
+    html+='<div onclick="regresarATonos()" style="margin-top:12px;text-align:center;padding:10px;border-radius:10px;background:#1e1e2e;color:#fff;font-size:12px;font-weight:800;cursor:pointer">⬅ REGRESAR A TONOS</div>';
+    html+='</div>';
+    document.getElementById('vistaTonos').style.display='none';
+    var vd=document.getElementById('vistaDetalle'); vd.style.display='block'; vd.innerHTML=html;
+    dibujarPiano(v);
+  };
+  window.cambiarVersion=function(i){
+    versionActual=i;
+    var arr=tipoActual==='mayor'?NAT_MAYOR:NAT_MENOR;
+    var a=arr[acordeIdxActual];
+    var versiones=Pm(a);
+    var v=versiones[i];
+    var color=tipoActual==='mayor'?'#4ade80':'#fb923c';
+    for(var k=0;k<3;k++){ var b=document.getElementById('verBtn'+k); if(b){ b.style.background=(k===i?color:'#1e1e2e'); b.style.color=(k===i?'#000':'#fff'); } }
+    document.getElementById('cardIzq').textContent=v.speaks[0];
+    document.getElementById('cardDer').textContent=v.speaks.join(" - ");
+    document.getElementById('cardTodo').textContent=v.speaks.join(" - ");
+    dibujarPiano(v);
+    hablar(v.full);
+  };
+  function dibujarPiano(v){
+    var cont=document.getElementById('pianoCont');
+    if(!cont) return;
+    // Piano completo tal cual en el respaldo: de Do2 a Do5, con scroll, resaltando las notas del acorde
+    var nombres=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+    var teclas=[];
+    for(var oct=2;oct<=5;oct++){
+      for(var ni=0;ni<12;ni++){
+        if(oct===5 && ni>0) break;
+        var n=nombres[ni]+oct;
+        teclas.push({n:n, blanca:nombres[ni].indexOf("#")===-1, label:["Do","Do#","Re","Re#","Mi","Fa","Fa#","Sol","Sol#","La","La#","Si"][ni]});
+      }
+    }
+    var color=tipoActual==='mayor'?'#4ade80':'#fb923c';
+    var html='<div style="overflow-x:auto;margin-top:12px;padding-bottom:6px"><div style="display:flex;position:relative;height:120px;min-width:640px">';
+    teclas.forEach(function(k){
+      var on=v.notes.indexOf(k.n)!==-1;
+      if(k.blanca){
+        html+='<div onclick="tocarNotaPiano(\''+k.n+'\')" style="width:38px;height:120px;flex-shrink:0;background:'+(on?color:'#fff')+';border:1px solid #111;border-radius:0 0 6px 6px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:9px;font-weight:800;color:'+(on?'#000':'#111')+';cursor:pointer;z-index:1">'+(on?k.label:'')+'</div>';
+      } else {
+        html+='<div onclick="tocarNotaPiano(\''+k.n+'\')" style="width:24px;height:70px;flex-shrink:0;background:'+(on?color:'#111')+';border:1px solid #000;border-radius:0 0 4px 4px;margin-left:-12px;margin-right:-12px;z-index:2;cursor:pointer"></div>';
+      }
+    });
+    html+='</div></div>';
+    cont.innerHTML=html;
+    // Scroll al acorde, como en el respaldo
+    try{
+      var sc=cont.firstChild;
+      var idx=teclas.findIndex(function(k){return v.notes.indexOf(k.n)!==-1;});
+      if(idx>0) sc.scrollTo({left:Math.max(0, idx*30-40), behavior:"smooth"});
+    }catch(e){}
+  }
+  window.playVersion=function(){
+    var arr=tipoActual==='mayor'?NAT_MAYOR:NAT_MENOR;
+    var a=arr[acordeIdxActual];
+    var versiones=Pm(a);
+    var v=versiones[versionActual];
+    v.notes.forEach(function(n,i){ setTimeout(function(){ tocarNotaPiano(n); }, i*150); });
+    hablar(v.full);
+  };
+  window.abrirVentanaModo=function(modo){
+    document.getElementById('bloqueModos').style.display='none';
+    document.getElementById('ventanaModo').style.display='block';
+    document.body.style.overflow='hidden';
+  };
+  window.cerrarVentanaModo=function(){
+    document.getElementById('ventanaModo').style.display='none';
+    var bien=document.getElementById('bienvenida');
+    if(bien) bien.classList.add('saliendo');
+    var seg=document.getElementById('segunda');
+    if(seg){ seg.style.display='block'; seg.classList.add('entrando'); }
+    document.getElementById('bloqueModos').style.display='block';
+    document.body.style.overflow='';
+    if(seg) seg.scrollTop=0;
+  };
+  window.cambiarModo=function(modo){
+    var tabAyuda=document.getElementById('tabAyuda');
+    if(tabAyuda) tabAyuda.classList.remove('activa');
+    var contAyuda=document.getElementById('contAyuda');
+    if(contAyuda) contAyuda.classList.remove('activa');
+    ['sencillo','medio','dificil'].forEach(function(m){
+      var tab=document.getElementById('tab'+m.charAt(0).toUpperCase()+m.slice(1));
+      if(tab) tab.classList.toggle('activa', m===modo);
+      var cont=document.getElementById('cont'+m.charAt(0).toUpperCase()+m.slice(1));
+      if(cont) cont.classList.toggle('activa', m===modo);
+    });
+    var bm2=document.getElementById('bloqueModos');
+    if(bm2) bm2.style.display='block';
+    var seg=document.getElementById('segunda');
+    if(seg) seg.scrollTop=0;
+  };
+  window.cambiarPestana=function(cual){
+    if(cual==='ayuda'){
+      var estaActiva=document.getElementById('contAyuda').classList.contains('activa');
+      var nueva=!estaActiva;
+      document.getElementById('tabAyuda').classList.toggle('activa', nueva);
+      document.getElementById('contAyuda').classList.toggle('activa', nueva);
+      if(nueva){
+        // Al abrir ayuda, quitar activa de modos para que no se revuelva
+        ['sencillo','medio','dificil'].forEach(function(m){
+          var tab=document.getElementById('tab'+m.charAt(0).toUpperCase()+m.slice(1));
+          if(tab) tab.classList.remove('activa');
+          var cont=document.getElementById('cont'+m.charAt(0).toUpperCase()+m.slice(1));
+          if(cont) cont.classList.remove('activa');
+        });
+        document.getElementById('segunda').scrollTop=0;
+      }
+    }
+  };
+
+})();
+</script>
+</body>
+</html>
